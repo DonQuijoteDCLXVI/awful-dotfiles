@@ -1,103 +1,89 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, lib, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      /etc/nixos/hardware-configuration.nix
-    ];
+ imports = [
+ 	./hardware-configuration.nix
+ ];
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+ # Bootloader
+	boot.loader.systemd-boot.enable = true;
+	boot.loader.efi.canTouchEfiVariables = true;
 
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+ # Greeter
+ services.greetd = {
+	enable = true;
+	settings = {
+		default_session = {
+			command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd sway";
+			user = "kittydclxvi";
+		};
+	};
+ };
 
-  # Use NixOS experimental features
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+ # Use latest kernel.
+ boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  networking.hostName = "awful-nixos";
-  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+ # Use NixOS experimental features
+ nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+ # Network
+ networking.hostName = "awful-nixos";
+ networking.wireless.enable = true;
+ networking.networkmanager.enable = true;
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+ # Time zone
+ time.timeZone = "Asia/Yekaterinburg";
 
-  # Set your time zone.
-  time.timeZone = "Asia/Yekaterinburg";
+ # Select internationalisation properties.
+ i18n.defaultLocale = "en_US.UTF-8";
 
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
+ i18n.extraLocaleSettings = {
+	LC_ADDRESS = "ru_RU.UTF-8";
+	LC_IDENTIFICATION = "ru_RU.UTF-8";
+	LC_MEASUREMENT = "ru_RU.UTF-8";
+	LC_MONETARY = "ru_RU.UTF-8";
+	LC_NAME = "ru_RU.UTF-8";
+	LC_NUMERIC = "ru_RU.UTF-8";
+	LC_PAPER = "ru_RU.UTF-8";
+	LC_TELEPHONE = "ru_RU.UTF-8";
+	LC_TIME = "ru_RU.UTF-8";
+ };
 
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "ru_RU.UTF-8";
-    LC_IDENTIFICATION = "ru_RU.UTF-8";
-    LC_MEASUREMENT = "ru_RU.UTF-8";
-    LC_MONETARY = "ru_RU.UTF-8";
-    LC_NAME = "ru_RU.UTF-8";
-    LC_NUMERIC = "ru_RU.UTF-8";
-    LC_PAPER = "ru_RU.UTF-8";
-    LC_TELEPHONE = "ru_RU.UTF-8";
-    LC_TIME = "ru_RU.UTF-8";
-  };
+ # Configure keymap in X11
+ services.xserver.xkb = {
+	layout = "us,ru";
+	variant = "";
+	options = "grp:win_space_toggle";
+ };
 
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
+ # User settings
+ users.users."kittydclxvi" = {
+ 	isNormalUser = true;
+	description = "KITTYDCLXVI";
+	extraGroups = [ "networkmanager" "wheel" ];
+	packages = with pkgs; [];
+ };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users."kittydclxvi" = {
-    isNormalUser = true;
-    description = "KITTYDCLXVI";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
-  };
+ # Proprietary software
+ nixpkgs.config.allowUnfree = true;
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+ # Installed packages
+ environment.systemPackages = with pkgs; [
+	vim
+	neovim
+	wget
+	git
+	mako
+	tuigreet
+ ];
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-   vim
-   neovim
-   wget
-  ];
+ # Enable Sway
+ programs.sway = {
+	enable = true;
+	wrapperFeatures.gtk = true;
+ };
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "26.05"; # Did you read the comment?
+ # System version
+ system.stateVersion = "26.05"; # Did you read the comment?
 
 }
