@@ -75,6 +75,7 @@
 	git
 	mako
 	tuigreet
+	keepassxc
  ];
 
  # Enable Sway
