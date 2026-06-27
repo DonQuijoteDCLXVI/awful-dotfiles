@@ -6,7 +6,7 @@
  ];
 
  # Bootloader
-	boot.loader.systemd-boot.enable = true;
+	boot.loader.limine.enable = true;
 	boot.loader.efi.canTouchEfiVariables = true;
 
  # Greeter
@@ -22,6 +22,12 @@
 
  # Use latest kernel.
  boot.kernelPackages = pkgs.linuxPackages_latest;
+
+ # Bluetooth
+ hardware.bluetooth = {
+	enable = true;
+	powerOnBoot = true;
+ };
 
  # Use NixOS experimental features
  nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -49,6 +55,11 @@
 	LC_TIME = "ru_RU.UTF-8";
  };
 
+ # Fonts
+ fonts.packages = with pkgs; [
+	nerd-fonts.jetbrains-mono
+ ];
+
  # Configure keymap in X11
  services.xserver.xkb = {
 	layout = "us,ru";
@@ -70,12 +81,17 @@
  # Installed packages
  environment.systemPackages = with pkgs; [
 	vim
-	neovim
+	neovim 
 	wget
 	git
 	mako
 	tuigreet
 	keepassxc
+	bluez
+	bluetui
+	nnn
+	wl-clipboard
+	slurp
  ];
 
  # Enable Sway
