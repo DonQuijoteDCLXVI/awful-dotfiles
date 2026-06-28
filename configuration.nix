@@ -80,11 +80,14 @@
 
  # Installed packages
  environment.systemPackages = with pkgs; [
+	tor-browser
+	firefox
 	vim
 	neovim 
 	wget
 	git
 	mako
+	wofi
 	tuigreet
 	keepassxc
 	bluez
@@ -92,12 +95,20 @@
 	nnn
 	wl-clipboard
 	slurp
+	ayugram-desktop
  ];
 
  # Enable Sway
  programs.sway = {
 	enable = true;
 	wrapperFeatures.gtk = true;
+ };
+
+ # Firefox configuration
+ programs.firefox = {
+	enable = true;
+
+	languagePacks = ["en-US" "ru"];
  };
 
  # System version
